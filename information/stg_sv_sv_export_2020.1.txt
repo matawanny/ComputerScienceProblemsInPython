@@ -1,0 +1,745 @@
+  CREATE OR replace FUNCTION array_except(anyarray, anyarray) returns anyarray
+    AS
+      $$
+      SELECT array_agg(elements)
+      FROM   (
+             (
+                    SELECT unnest($1)
+                    EXCEPT
+                    SELECT unnest($2)) ) AS r (elements) $$ LANGUAGE SQL strict immutable;
+
+    CREATE OR REPLACE FUNCTION array_greatest(anyarray)
+    RETURNS anyelement LANGUAGE SQL AS $$
+    SELECT max(x) FROM unnest($1) x;
+    $$;
+
+    CREATE OR REPLACE FUNCTION get_sv_entity_date() RETURNS timestamp AS $$
+    SELECT TO_TIMESTAMP(value1, 'YYYY-MM-DD HH24:MI:SS')::timestamp without time zone
+    FROM edm_params
+    WHERE key = 'sv_export_date'
+    $$ LANGUAGE SQL;
+
+    CREATE OR REPLACE FUNCTION get_last_send_to_sv_date(stage text) RETURNS timestamp AS $$
+    SELECT TO_TIMESTAMP(send_to_sv_date, 'YYYY-MM-DD HH24:MI:SS')::timestamp without time zone
+    FROM edm_export_params
+    WHERE mdm_stage = stage
+    $$ LANGUAGE SQL;
+
+
+        DROP TABLE IF EXISTS entity_linked_list_sv cascade;
+        DROP TABLE IF EXISTS fop_sv_fir_ll cascade;
+        DROP TABLE IF EXISTS fop_sv_ofl_ll;
+        DROP TABLE IF EXISTS fop_sv_per_ll;
+        DROP TABLE IF EXISTS sv_etl_source_count;
+        DROP TABLE IF EXISTS sv_event_code_pivot;
+        DROP TABLE IF EXISTS sv_export_decision;
+        DROP TABLE IF EXISTS sv_stage_fir;
+        DROP TABLE IF EXISTS sv_stage_ofl;
+        DROP TABLE IF EXISTS sv_stage_per;
+        DROP TABLE IF EXISTS sv_orphan_stage_ofl;
+        DROP TABLE IF EXISTS sv_orphan_stage_per;
+        DROP TABLE IF EXISTS sv_export_fir;
+        DROP TABLE IF EXISTS sv_export_ofl;
+        DROP TABLE IF EXISTS sv_export_per;
+        DROP TABLE IF EXISTS sv_invalid_fir;
+        DROP TABLE IF EXISTS sv_invalid_ofl;
+        DROP TABLE IF EXISTS sv_invalid_per;
+
+
+    CREATE TABLE entity_linked_list_sv
+    AS
+        WITH RECURSIVE tree AS (
+                 SELECT a.entity_id,
+                    a.parent_id,
+                    a.salesvision_id,
+                    a.entity_type_id,
+                    a.crd,
+                    CASE
+                        WHEN a.etl_source like 'sv%' and a.sv_event_code = 'I'
+                            THEN TRUE
+                        ELSE
+                            CASE
+                                WHEN a.salesvision_id is not null or ((a.ect_entity_id = 'a0W1N00000Qw7zGUAR' and a.ect_channel_id = 'a0U1N00000G4uZwUAJ' and a.ect_team_id = 'a0c1N00000RvRacQAF') or (a.ect_entity_id = 'a0W1N00000Qw7zGUAR' and a.ect_channel_id = 'a0U1N00000G4ua1UAB' and a.ect_team_id = 'a0c1N00000RvRawQAF'))
+                                    THEN TRUE
+                                ELSE FALSE
+                            END
+                    END AS is_valid,
+                    ARRAY[a.entity_id] AS id_path,
+                    ARRAY[LEFT(a.entity_type_id,1)] AS type_path,
+                    ARRAY[
+                    CASE
+                        WHEN a.etl_source like 'sv%' and a.sv_event_code = 'I'
+                            THEN TRUE
+                        ELSE
+                            CASE
+                                WHEN a.salesvision_id is not null or ((a.ect_entity_id = 'a0W1N00000Qw7zGUAR' and a.ect_channel_id = 'a0U1N00000G4uZwUAJ' and a.ect_team_id = 'a0c1N00000RvRacQAF') or (a.ect_entity_id = 'a0W1N00000Qw7zGUAR' and a.ect_channel_id = 'a0U1N00000G4ua1UAB' and a.ect_team_id = 'a0c1N00000RvRawQAF'))
+                                    THEN TRUE
+                                ELSE FALSE
+                            END
+                    END
+                    ] AS valid_path,
+                    ARRAY[a.salesvision_id] AS sv_path,
+                    ARRAY[a.parent_id] AS parent_path
+                   FROM stg_sv_entity a
+                  WHERE (a.parent_id is null)
+                UNION ALL
+                 SELECT c.entity_id,
+                    c.parent_id,
+                    c.salesvision_id,
+                    c.entity_type_id,
+                    c.crd,
+                    CASE
+                        WHEN c.etl_source like 'sv%' and c.sv_event_code = 'I'
+                            THEN TRUE
+                        ELSE
+                            CASE
+                                WHEN c.salesvision_id is not null or ((c.ect_entity_id = 'a0W1N00000Qw7zGUAR' and c.ect_channel_id = 'a0U1N00000G4uZwUAJ' and c.ect_team_id = 'a0c1N00000RvRacQAF') or (c.ect_entity_id = 'a0W1N00000Qw7zGUAR' and c.ect_channel_id = 'a0U1N00000G4ua1UAB' and c.ect_team_id = 'a0c1N00000RvRawQAF'))
+                                    THEN TRUE
+                                ELSE FALSE
+                            END
+                    END,
+                    (t_1.id_path || c.entity_id),
+                    (t_1.type_path || LEFT(c.entity_type_id,1)),
+                    (t_1.valid_path || CASE
+                        WHEN c.etl_source like 'sv%' and c.sv_event_code = 'I'
+                            THEN TRUE
+                        ELSE
+                            CASE
+                                WHEN c.salesvision_id is not null or ((c.ect_entity_id = 'a0W1N00000Qw7zGUAR' and c.ect_channel_id = 'a0U1N00000G4uZwUAJ' and c.ect_team_id = 'a0c1N00000RvRacQAF') or (c.ect_entity_id = 'a0W1N00000Qw7zGUAR' and c.ect_channel_id = 'a0U1N00000G4ua1UAB' and c.ect_team_id = 'a0c1N00000RvRawQAF'))
+                                    THEN TRUE
+                                ELSE FALSE
+                            END
+                    END),
+                    (t_1.sv_path || c.salesvision_id),
+                    (t_1.parent_path || c.parent_id)
+                   FROM (tree t_1
+                     JOIN stg_sv_entity c ON ((c.parent_id = t_1.entity_id)))
+                )
+        SELECT  DISTINCT t.entity_id,
+                t.parent_id,
+                t.entity_type_id,
+                t.id_path,
+                t.parent_path,
+                t.sv_path,
+                t.type_path,
+                t.valid_path
+        FROM tree t;
+
+
+    CREATE TABLE sv_etl_source_count
+    AS
+        SELECT
+            entity_id,
+            COUNT(*) AS source_count,
+            COUNT(CASE WHEN etl_source='sv' THEN entity_id ELSE NULL END) AS sv_source_count,
+            COUNT(CASE WHEN etl_source='sf' THEN entity_id ELSE NULL END) AS sf_source_count
+        FROM stg_sv_entity_audit_log GROUP BY entity_id;
+
+    CREATE extension if NOT EXISTS tablefunc;
+    CREATE TABLE sv_event_code_pivot AS
+       SELECT d.*, e.salesforce_id, a.ingested_at, l.valid_path
+       FROM
+            (SELECT *
+                FROM CROSSTAB ('SELECT entity_id,  etl_source, sv_event_code FROM stg_sv_entity_audit_log ORDER BY 1,2')
+                AS final_result(entity_id Text, sv_sv_event_code Text, sf_sv_event_code Text)) d
+       JOIN stg_sv_entity e
+       ON d.entity_id = e.entity_id
+       JOIN stg_sv_entity_audit_log a
+       ON d.entity_id = a.entity_id
+       JOIN entity_linked_list_sv l
+       ON d.entity_id = l.entity_id;
+
+      CREATE TABLE sv_export_decision
+      AS
+        SELECT s.*,
+        CASE
+            WHEN s.source_count=1 AND s.sv_source_count=0 THEN 'SEND'
+            WHEN s.source_count=1 AND s.sf_source_count=0 THEN
+                CASE
+                   WHEN s.sv_sv_event_code = 'I' THEN 'SEND'
+                    ELSE 'NONE'
+                END
+            WHEN s.source_count>=2 and s.sv_sv_event_code = 'I' and s.sf_sv_event_code = 'U' THEN
+                CASE
+                    WHEN s.salesforce_id is null THEN 'SYNC CODE ERROR'
+                    ELSE 'SEND'
+                END
+            WHEN s.source_count>=2 AND s.sv_sv_event_code = 'I' AND s.sf_sv_event_code in ('I', 'D') THEN 'SYNC CODE ERROR'
+            WHEN s.source_count>=2 AND s.sv_sv_event_code = 'D' AND s.sf_sv_event_code in ('I', 'U') THEN 'SYNC CODE ERROR'
+            WHEN s.source_count>=2 AND s.sv_sv_event_code = 'D' AND s.sf_sv_event_code = 'D' THEN 'NONE'
+            WHEN s.source_count>=2 AND s.sv_sv_event_code = 'U' AND s.sf_sv_event_code in ('I', 'D') THEN 'SYNC CODE ERROR'
+            WHEN s.source_count>=2 AND s.sv_sv_event_code = 'U' AND s.sf_sv_event_code = 'U' THEN 'NONE'
+            ELSE 'NONE'
+        END AS ack_action
+        from
+       (select d.*, c.source_count, c.sv_source_count, c.sf_source_count from sv_event_code_pivot d
+        join sv_etl_source_count c
+        on d.entity_id = c.entity_id) s
+
+
+
+    CREATE TABLE fop_sv_fir_ll
+    AS
+        SELECT DISTINCT
+            id_path[firm_position] AS firm_id
+        FROM
+            (
+              select  ll.id_path,
+                      type_path,
+                      sv_path,
+                      unnest(array_except(array_positions(type_path, '3'), array_positions(valid_path, False))) AS firm_position
+              FROM entity_linked_list_sv ll
+            ) mm;
+
+    CREATE TABLE fop_sv_ofl_ll
+    AS
+        SELECT DISTINCT
+            id_path[array_greatest(firm_position)] AS firm_id,
+            id_path[office_position] AS office_id
+        FROM
+            (
+              SELECT    ll.id_path,
+                        type_path,
+                        sv_path,
+                        array_except(array_positions(type_path, '3'), array_positions(valid_path, False)) AS firm_position,
+                        unnest(array_except(array_positions(type_path, '2'), array_positions(valid_path, False))) AS office_position
+              FROM entity_linked_list_sv ll
+            ) mm;
+   CREATE TABLE fop_sv_per_ll
+    AS
+      SELECT DISTINCT
+            id_path[array_greatest(firm_position)] AS firm_id,
+            id_path[array_greatest(office_position)] AS office_id,
+            id_path[person_position] AS person_id
+      FROM
+            (
+              SELECT
+                  ll.id_path,
+                  type_path,
+                  sv_path,
+                  array_except(array_positions(type_path, '3'), array_positions(valid_path, False)) AS firm_position,
+                  array_except(array_positions(type_path, '2'), array_positions(valid_path, False)) AS office_position,
+                  unnest(array_except(array_positions(type_path, '1'), array_positions(valid_path, False))) AS person_position
+              FROM entity_linked_list_sv ll
+            ) mm;
+
+
+    create temp table sv_export_valid_addresses
+    AS
+        SELECT *
+        FROM stg_sv_entity_address_xref_audit_log
+        WHERE address_type_id = '601'
+        UNION
+        SELECT xref.*
+        FROM
+        (
+          SELECT distinct(entity_id)
+          FROM stg_sv_entity_address_xref_audit_log
+          GROUP BY entity_id
+          HAVING max(CASE "address_type_id"  WHEN '601' THEN 1 ELSE 0 END) = 0
+        ) s
+        JOIN stg_sv_entity_address_xref_audit_log xref
+            ON xref.entity_id = s.entity_id
+        WHERE address_type_id = '300';
+
+    create temp table sv_export_valid_phones
+    AS
+        SELECT *
+        FROM stg_sv_entity_phone_xref_audit_log
+        WHERE phone_type_id = '3'
+        UNION
+        SELECT xref.*
+        FROM
+        (
+          SELECT distinct(entity_id)
+          FROM stg_sv_entity_phone_xref_audit_log
+          GROUP BY entity_id
+          HAVING max(CASE "phone_type_id"  WHEN '3' THEN 1 ELSE 0 END) = 0
+        ) s
+        JOIN stg_sv_entity_phone_xref_audit_log xref
+            ON xref.entity_id = s.entity_id
+        WHERE phone_type_id = '1';
+    create temp table sv_export_valid_emails
+    AS
+        SELECT *
+        FROM stg_sv_entity_email_xref_audit_log
+        WHERE email_type_id = '3'
+        UNION
+        SELECT xref.*
+        FROM
+        (
+          SELECT distinct(entity_id)
+          FROM stg_sv_entity_email_xref_audit_log
+          GROUP BY entity_id
+          HAVING max(CASE "email_type_id"  WHEN '3' THEN 1 ELSE 0 END) = 0
+        ) s
+        JOIN stg_sv_entity_email_xref_audit_log xref
+            ON xref.entity_id = s.entity_id
+        WHERE email_type_id = '1';
+
+
+    CREATE TABLE sv_stage_fir
+    AS
+      SELECT DISTINCT
+              (
+                SELECT MAX(ua)
+                FROM unnest(ARRAY[ent.updated_at,
+                                  adr.updated_at]) ua
+              ) AS max_updated_at,
+              ent.entity_id AS entity_id,
+              ent.sv_event_code AS sv_event_code,
+              ent.salesvision_id AS sv_firm_id,
+              ent.entity_name AS firm_name,
+              adr.street_address_1 AS address_line_1,
+              adr.street_address_2 AS address_line_2,
+              adr.city AS address_city,
+              adr.country || '-' || adr.state AS address_state,
+              adr.postal_code AS address_zipcode,
+              adr.country AS address_country,
+              ent.persistence_id AS crm_firm_id,
+              CASE
+                    WHEN ent.ended_at is NOT NULL
+                        THEN 'D'
+                    WHEN ent.salesvision_id is NULL
+                        THEN 'I'
+                    ELSE 'U'
+              END AS event_code,
+              NULL AS crm_service_request_id,
+              CASE
+                      WHEN ent.created_at is NULL
+                      THEN to_char(NOW(), 'YYYY-MM-DD HH24:MI:SS')
+                 ELSE ent.created_at
+                 END
+              AS create_date,
+              'laz_cm_sv_api' AS create_user,
+              NULL AS maintenance_date, -- TODO: pass meaningful maintenance date
+              'laz_cm_sv_api' AS maintenance_user,
+              decision.ingested_at AS ingested_at,
+              decision.ack_action AS ack_action,
+              decision.valid_path AS valid_path
+      FROM stg_sv_entity ent
+      JOIN (SELECT DISTINCT(firm_id) AS firm_id FROM fop_sv_fir_ll) ll
+          ON ll.firm_id = ent.entity_id
+      JOIN sv_export_valid_addresses adr
+          ON adr.entity_id = ent.entity_id
+      JOIN sv_export_decision decision
+          ON decision.entity_id = ent.entity_id
+      WHERE ent.entity_type_id LIKE '3%';
+
+    CREATE TABLE sv_stage_ofl
+    AS
+      SELECT DISTINCT
+              (
+                SELECT MAX(ua)
+                FROM unnest(ARRAY[ent.updated_at,
+                                 -- fir.updated_at,
+                                  adr.updated_at]) ua
+              ) AS max_updated_at,
+              ent.entity_id AS entity_id,
+              ent.sv_event_code AS sv_event_code,
+              fir.salesvision_id AS sv_firm_id,
+              ent.salesvision_id AS sv_office_id,
+              adr.street_address_1 AS address_line_1,
+              CASE
+                WHEN adr.street_address_2 = ''
+                  THEN Null
+                ELSE adr.street_address_2
+              END AS address_line_2,
+              NULL AS address_line_3,
+              adr.city AS address_city,
+              adr.country || '-' || adr.state AS address_state,
+              adr.postal_code AS address_zipcode,
+              adr.country AS address_country,
+              fir.persistence_id AS crm_firm_id,
+              ent.persistence_id AS crm_office_id,
+              CASE
+                    WHEN ent.ended_at is NOT NULL
+                        THEN 'D'
+                    WHEN ent.salesvision_id is NULL
+                        THEN 'I'
+                    ELSE 'U'
+              END AS event_code,
+              NULL AS crm_service_request_id,
+              CASE
+                  WHEN ent.created_at is NULL
+                  THEN to_char(NOW(), 'YYYY-MM-DD HH24:MI:SS')
+              ELSE ent.created_at
+              END
+              AS create_date,
+              'laz_cm_sv_api' AS create_user,
+              NULL AS maintenance_date,
+              'laz_cm_sv_api' AS maintenance_user,
+              decision.ingested_at AS ingested_at,
+              decision.ack_action AS ack_action,
+              decision.valid_path AS valid_path
+      FROM stg_sv_entity ent
+      JOIN (SELECT office_id, firm_id FROM fop_sv_ofl_ll) ll
+        ON ll.office_id = ent.entity_id
+      JOIN stg_sv_entity fir
+        ON fir.entity_id = ll.firm_id
+      JOIN sv_export_valid_addresses adr
+        ON adr.entity_id = ent.entity_id
+      JOIN sv_export_decision decision
+        ON decision.entity_id = ent.entity_id
+      WHERE ent.entity_type_id  LIKE '2%';
+
+    CREATE TABLE sv_stage_per
+    AS
+      SELECT  (
+                SELECT MAX(ua)
+                FROM unnest(ARRAY[per_updated_at,
+    --                              ofl_updated_at,
+    --                              fir_updated_at,
+                                  phone_updated_at,
+                                  email_updated_at]) ua
+              ) AS max_updated_at,
+              s.entity_id AS entity_id,
+              s.sv_event_code AS sv_event_code,
+              sv_firm_id,
+              sv_office_id,
+              sv_person_id,
+              CASE
+                WHEN ent_name[1] in ('', 'null', 'NULL', 'Null')
+                  THEN NULL
+                ELSE ent_name[1]
+              END
+              AS last_name,
+              CASE
+                WHEN ent_name[2] in ('', 'null', 'NULL', 'Null')
+                  THEN NULL
+                ELSE ent_name[2]
+              END
+              AS first_name,
+              CASE
+                WHEN ent_name[3] in ('', 'null', 'NULL', 'Null')
+                  THEN NULL
+                ELSE ent_name[3]
+              END
+              AS middle_name,
+              CASE
+                WHEN entity_type_id='101'
+                  THEN 'N'
+                WHEN entity_type_id='102'
+                  THEN 'Y'
+                ELSE '?'
+              END AS broker_team,
+              crm_firm_id,
+              crm_office_id,
+              crm_person_id,
+              CASE
+                    WHEN s.ended_at is NOT NULL
+                        THEN 'D'
+                    WHEN s.salesvision_id is NULL
+                        THEN 'I'
+                    ELSE 'U'
+              END AS event_code,
+              NULL AS crm_service_request_id,
+              'C' AS person_status,
+              home_office_flag,
+              phone_number,
+              email_address,
+              crd AS crd_number,
+              broker_rep_code,
+              CASE
+                WHEN created_at is NULL
+                  THEN to_char(NOW(), 'YYYY-MM-DD HH24:MI:SS')
+                ELSE created_at
+              END
+              AS create_date,
+              'laz_cm_sv_api' AS create_user,
+              NULL AS maintenance_date,
+              'laz_cm_sv_api' AS maintenance_user,
+              s.audit_log_ingested_at AS ingested_at,
+              s.ack_action AS ack_action,
+              s.valid_path AS valid_path
+      FROM
+      (
+        SELECT  regexp_split_to_array(ent.entity_name, '\|') ent_name,
+                ent.*,
+                ent.updated_at AS per_updated_at,
+                ofl.persistence_id AS crm_office_id,
+                fir.persistence_id AS crm_firm_id,
+                ent.persistence_id AS crm_person_id,
+                ofl.salesvision_id AS sv_office_id,
+                fir.salesvision_id AS sv_firm_id,
+                ofl.updated_at AS ofl_updated_at,
+                fir.updated_at AS fir_updated_at,
+                ent.salesvision_id AS sv_person_id,
+                pho.phone_number, pho.updated_at AS phone_updated_at,
+                ema.email_address, ema.updated_at AS email_updated_at,
+                decision.ingested_at AS audit_log_ingested_at,
+                decision.ack_action as ack_action,
+                decision.valid_path as valid_path
+        FROM stg_sv_entity ent
+        JOIN (SELECT person_id, office_id, firm_id FROM fop_sv_per_ll) ll
+          ON ll.person_id = ent.entity_id
+        JOIN stg_sv_entity ofl
+            ON office_id = ofl.entity_id
+        JOIN stg_sv_entity fir
+            ON firm_id = fir.entity_id
+        JOIN sv_export_decision decision
+            ON decision.entity_id = ent.entity_id
+        LEFT JOIN sv_export_valid_phones pho
+            ON pho.entity_id = ent.entity_id
+        LEFT JOIN sv_export_valid_emails ema
+            ON ema.entity_id = ent.entity_id
+        --WHERE (pho.phone_type_id = '3') OR (pho.phone_type_id is NULL) AND (ema.email_type_id = '3') OR (ema.email_type_id is NULL) AND ent.entity_type_id  LIKE '1%'
+      ) s;
+
+
+    CREATE TABLE sv_orphan_stage_ofl
+    AS
+      SELECT DISTINCT
+              (
+                SELECT MAX(ua)
+                FROM unnest(ARRAY[ent.updated_at,
+                                  adr.updated_at]) ua
+              ) AS max_updated_at,
+              ent.entity_id AS entity_id,
+              ent.sv_event_code AS sv_event_code,
+              firm.salesvision_id AS sv_firm_id,
+              ent.salesvision_id AS sv_office_id,
+              adr.street_address_1 AS address_line_1,
+              CASE
+                WHEN adr.street_address_2 = ''
+                  THEN Null
+                ELSE adr.street_address_2
+              END AS address_line_2,
+              NULL AS address_line_3,
+              adr.city AS address_city,
+              adr.country || '-' || adr.state AS address_state,
+              adr.postal_code AS address_zipcode,
+              adr.country AS address_country,
+              firm.persistence_id AS crm_firm_id,
+              ent.persistence_id AS crm_office_id,
+              CASE
+                    WHEN ent.ended_at is NOT NULL
+                        THEN 'D'
+                    WHEN ent.salesvision_id is NULL
+                        THEN 'I'
+                    ELSE 'U'
+              END AS event_code,
+              NULL AS crm_service_request_id,
+              CASE
+                  WHEN ent.created_at is NULL
+                  THEN to_char(NOW(), 'YYYY-MM-DD HH24:MI:SS')
+              ELSE ent.created_at
+              END
+              AS create_date,
+              'laz_cm_sv_api' AS create_user,
+              NULL AS maintenance_date,
+              'laz_cm_sv_api' AS maintenance_user,
+              ent.ingested_at AS ingested_at,
+              null AS ack_action,
+              ARRAY[]::BOOLEAN[] as valid_path
+      FROM stg_sv_entity_audit_log ent
+      JOIN stg_sv_entity_audit_log firm
+        ON ent.parent_id = firm.entity_id
+      JOIN sv_export_valid_addresses adr
+        ON adr.entity_id = ent.entity_id
+      JOIN sv_export_decision decision
+        ON decision.entity_id = ent.entity_id
+      LEFT JOIN entity_linked_list_sv l
+        ON ent.entity_id = l.entity_id
+      WHERE l.entity_id IS NULL AND ent.entity_type_id  LIKE '2%';
+
+    CREATE TABLE sv_orphan_stage_per
+    AS
+      SELECT  (
+                SELECT MAX(ua)
+                FROM unnest(ARRAY[per_updated_at,
+                                  phone_updated_at,
+                                  email_updated_at]) ua
+              ) AS max_updated_at,
+              s.entity_id AS entity_id,
+              s.sv_event_code AS sv_event_code,
+              sv_firm_id,
+              sv_office_id,
+              sv_person_id,
+              CASE
+                WHEN ent_name[1] in ('', 'null', 'NULL', 'Null')
+                  THEN NULL
+                ELSE ent_name[1]
+              END
+              AS last_name,
+              CASE
+                WHEN ent_name[2] in ('', 'null', 'NULL', 'Null')
+                  THEN NULL
+                ELSE ent_name[2]
+              END
+              AS first_name,
+              CASE
+                WHEN ent_name[3] in ('', 'null', 'NULL', 'Null')
+                  THEN NULL
+                ELSE ent_name[3]
+              END
+              AS middle_name,
+              CASE
+                WHEN entity_type_id='101'
+                  THEN 'N'
+                WHEN entity_type_id='102'
+                  THEN 'Y'
+                ELSE '?'
+              END AS broker_team,
+              crm_firm_id,
+              crm_office_id,
+              crm_person_id,
+              CASE
+                    WHEN s.ended_at is NOT NULL
+                        THEN 'D'
+                    WHEN s.salesvision_id is NULL
+                        THEN 'I'
+                    ELSE 'U'
+              END AS event_code,
+              NULL AS crm_service_request_id,
+              'C' AS person_status,
+              home_office_flag,
+              phone_number,
+              email_address,
+              crd AS crd_number,
+              broker_rep_code,
+              CASE
+                WHEN created_at is NULL
+                  THEN to_char(NOW(), 'YYYY-MM-DD HH24:MI:SS')
+                ELSE created_at
+              END
+              AS create_date,
+              'laz_cm_sv_api' AS create_user,
+              NULL AS maintenance_date,
+              'laz_cm_sv_api' AS maintenance_user,
+              s.ingested_at AS ingested_at,
+              s.ack_action AS ack_action,
+              s.valid_path AS valid_path
+      FROM
+      (
+        SELECT  regexp_split_to_array(ent.entity_name, '\|') ent_name,
+                ent.*,
+                ent.updated_at AS per_updated_at,
+                office.persistence_id AS crm_office_id,
+                firm.persistence_id AS crm_firm_id,
+                ent.persistence_id AS crm_person_id,
+                office.salesvision_id AS sv_office_id,
+                firm.salesvision_id AS sv_firm_id,
+                ent.salesvision_id AS sv_person_id,
+                pho.phone_number, pho.updated_at AS phone_updated_at,
+                ema.email_address, ema.updated_at AS email_updated_at,
+                NULL as ack_action,
+                ARRAY[]::BOOLEAN[] as valid_path
+        FROM stg_sv_entity_audit_log ent
+        LEFT JOIN stg_sv_entity_audit_log office
+            ON ent.parent_id = office.entity_id
+        LEFT JOIN stg_sv_entity_audit_log firm
+            ON office.parent_id = firm.entity_id
+        LEFT JOIN sv_export_valid_phones pho
+            ON pho.entity_id = ent.entity_id
+        LEFT JOIN sv_export_valid_emails ema
+            ON ema.entity_id = ent.entity_id
+        LEFT JOIN entity_linked_list_sv l
+            ON ent.entity_id = l.entity_id
+        WHERE l.entity_id IS NULL AND ent.entity_type_id  LIKE '1%'
+      ) s;
+
+
+    CREATE TABLE sv_export_fir
+    AS
+        SELECT DISTINCT sv_firm_id,firm_name,address_line_1,address_line_2,address_city,address_state,address_zipcode,address_country,crm_firm_id,event_code,crm_service_request_id,create_date,create_user,maintenance_date,maintenance_user
+        FROM sv_stage_fir
+        WHERE ingested_at::timestamp > get_last_send_to_sv_date('sv') AND ack_action='SEND'
+        AND sv_event_code IS NOT NULL
+        AND valid_path in ('{t}', '{t,t}', '{t,t,t}');
+
+    CREATE TABLE sv_export_ofl
+    AS
+        SELECT DISTINCT sv_firm_id,sv_office_id,address_line_1,address_line_2,address_line_3,address_city,address_state,address_zipcode,address_country,crm_firm_id,crm_office_id,event_code,crm_service_request_id,create_date,create_user,maintenance_date,maintenance_user
+        FROM sv_stage_ofl
+        WHERE ingested_at::timestamp > get_last_send_to_sv_date('sv') AND ack_action='SEND'
+        AND sv_event_code IS NOT NULL
+        AND valid_path in ('{t}', '{t,t}', '{t,t,t}');
+
+    CREATE TABLE sv_export_per
+    AS
+        SELECT DISTINCT sv_firm_id,sv_office_id,sv_person_id,last_name,first_name,middle_name,broker_team,crm_firm_id,crm_office_id,crm_person_id,event_code,crm_service_request_id,person_status,home_office_flag,phone_number,email_address,crd_number,broker_rep_code,create_date,create_user,maintenance_date,maintenance_user
+        FROM sv_stage_per
+        WHERE ingested_at::timestamp > get_last_send_to_sv_date('sv') AND ack_action='SEND'
+        AND sv_event_code IS NOT NULL
+        AND valid_path in ('{t}', '{t,t}', '{t,t,t}');
+
+
+    CREATE TABLE sv_invalid_fir
+    AS
+        SELECT DISTINCT sv_firm_id,firm_name,address_line_1,address_line_2,address_city,address_state,address_zipcode,address_country,crm_firm_id,event_code,crm_service_request_id,create_date,create_user,maintenance_date,maintenance_user,
+        ack_action, valid_path
+        FROM sv_stage_fir
+        WHERE ingested_at::timestamp > get_last_send_to_sv_date('sv')
+        AND sv_event_code IS NOT NULL
+        AND (ack_action!='SEND'
+        OR valid_path NOT IN  ('{t}', '{t,t}', '{t,t,t}'));
+
+    CREATE TABLE sv_invalid_ofl
+    AS
+        SELECT DISTINCT sv_firm_id,sv_office_id,address_line_1,address_line_2,address_line_3,address_city,address_state,address_zipcode,address_country,crm_firm_id,crm_office_id,event_code,crm_service_request_id,create_date,create_user,maintenance_date,maintenance_user,
+        ack_action, valid_path,
+        CASE
+          WHEN ack_action != 'SEND'
+          THEN 'Ineligible For Ack'
+          ELSE
+            CASE
+               WHEN valid_path = ARRAY[]::BOOLEAN[]
+                 THEN 'Orphan Entity'
+               WHEN valid_path in ('{t,f,t}', '{t,f,f}', '{t,f}')
+                 THEN 'Invalid ECT Channel Entity'
+               ELSE 'Invalid ECT Channel Ancestor'
+             END
+        END AS invalid_reason
+        FROM sv_stage_ofl
+        WHERE ingested_at::timestamp > get_last_send_to_sv_date('sv')
+        AND sv_event_code IS NOT NULL
+        AND (ack_action!='SEND'
+        OR valid_path NOT IN ('{t}', '{t,t}', '{t,t,t}'))
+        UNION
+        SELECT sv_firm_id,sv_office_id,sv_person_id,last_name,first_name,middle_name,broker_team,crm_firm_id,crm_office_id,crm_person_id,event_code,crm_service_request_id,person_status,home_office_flag,phone_number,email_address,crd_number,broker_rep_code,create_date,create_user,maintenance_date,maintenance_user,
+        ack_action, valid_path,
+        CASE
+           WHEN valid_path = ARRAY[]::BOOLEAN[]
+             THEN 'Orphan Entity'
+           WHEN valid_path in ('{t,f,t}', '{t,f,f}', '{t,f}')
+             THEN 'Invalid ECT Channel Entity'
+           ELSE 'Invalid ECT Channel Ancestor'
+        END AS invalid_reason
+        FROM sv_orphan_stage_ofl
+        WHERE ingested_at::timestamp > get_last_send_to_sv_date('sv');
+
+    CREATE TABLE sv_invalid_per
+    AS
+        SELECT DISTINCT sv_firm_id,sv_office_id,sv_person_id,last_name,first_name,middle_name,broker_team,crm_firm_id,crm_office_id,crm_person_id,event_code,crm_service_request_id,person_status,home_office_flag,phone_number,email_address,crd_number,broker_rep_code,create_date,create_user,maintenance_date,maintenance_user,
+        ack_action, valid_path,
+        CASE
+          WHEN ack_action != 'SEND'
+          THEN 'Ineligible For Ack'
+          ELSE
+            CASE
+               WHEN valid_path = ARRAY[]::BOOLEAN[]
+                 THEN 'Orphan Entity'
+               WHEN valid_path = '{t,t,f}'
+                 THEN 'Invalid ECT Channel Entity'
+               ELSE 'Invalid ECT Channel Ancestor'
+            END
+        END AS invalid_reason
+        FROM sv_stage_per
+        WHERE ingested_at::timestamp > get_last_send_to_sv_date('sv')
+        AND sv_event_code IS NOT NULL
+        AND (ack_action!='SEND'
+        OR valid_path NOT IN ('{t}', '{t,t}', '{t,t,t}'))
+        UNION
+        SELECT sv_firm_id,sv_office_id,sv_person_id,last_name,first_name,middle_name,broker_team,crm_firm_id,crm_office_id,crm_person_id,event_code,crm_service_request_id,person_status,home_office_flag,phone_number,email_address,crd_number,broker_rep_code,create_date,create_user,maintenance_date,maintenance_user,
+        ack_action, valid_path,
+        CASE
+           WHEN valid_path = ARRAY[]::BOOLEAN[]
+             THEN 'Orphan Entity'
+           WHEN valid_path = '{t,t,f}'
+             THEN 'Invalid ECT Channel Entity'
+           ELSE 'Invalid ECT Channel Ancestor'
+        END AS invalid_reason
+        FROM sv_orphan_stage_per
+        WHERE ingested_at::timestamp > get_last_send_to_sv_date('sv');
+                                                                                                  
