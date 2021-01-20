@@ -1,0 +1,68 @@
+Delete branch
+
+git branch -d xxx
+git branch -D xxx
+git push origin --delete xxx
+
+Create branch
+
+git checkout -b xxx
+git add .
+git commit -m "yyyy"
+git push -u origin xxx
+
+sudo /usr/bin/pip-3.6 install docutils
+
+sudo python3.6 -m pip install docutils
+
+e this in .gitconfig file then this problem will resolved.
+
+- [http]
+     proxy = http://127.0.0.1:8087
+     sslVerify = false
+OR git config --global http.proxy ''
+
+
+/usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/development/edm-dpl.zip s3://lazard-test-client-master/code/dpl/development/dbsync_driver.py -s sv_fop_export
+
+
+
+
+
+
+#RUN MDM SV
+
+/usr/bin/spark-submit --num-executors 8  --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/development/edm-dpl.zip s3://lazard-test-client-master/code/dpl/development/mdm_driver.py -s s3://lazard-emr-test-data/MDM/SPRINT7/SV_AGR1/ -m false -p stg_2418_ -e -x SV
+
+ ./build_job_system.sh -gu xiaop -e test -deploy commons -commons_branch check_java_master
+ 
+ /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/sf_ack_fix/edm-dpl.zip s3://lazard-test-client-master/code/dpl/sf_ack_fix/dbsync_driver.py -s sf_fop_export
+
+
+[hadoop@ip-10-151-24-184 ~]$ sudo rm -rf /usr/local/lib64/python3.6/site-packages/numpy*
+[hadoop@ip-10-151-24-184 ~]$ sudo pip-3.6 install numpy==1.15.4
+Collecting numpy==1.15.4
+
+ /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/sv_valid_fix/edm-dpl.zip s3://lazard-test-client-master/code/dpl/sf_ack_fix/dbsync_driver.py -s sv_fop_export_print
+ 
+ deploy filemanager in dev box:
+ /home/edmfilemgr/cm-deploy
+ ./build_job_system.sh -gu=USER-deploy=commons -commons_branch=development
+ 
+  ./build_job_system.sh -gu=xiaop -deploy=commons -commons_branch=fx_conversions -js_branch=fx_conversions
+  
+    ./build_job_system.sh -gu=xiaop -deploy=jobsystem -commons_branch=fx_conversions -js_branch=fx_conversions
+	    ./build_job_system.sh -gu=xiaop -deploy=commons -commons_branch=dev-2020.14
+		 ./build_job_system.sh -gu=xiaop -deploy=jobsystem -commons_branch=dev-2020.14 -js_branch=last_ack_date
+		
+			    ./build_job_system.sh -gu=xiaop -deploy=commons -commons_branch=pereza-development
+  
+ under ~/edm-jobsystem/jobsystem
+
+i run python RegisterFeeds.py
+
+  ./build_job_system.sh -gu=xiaop -deploy=jobsystem -commons_branch=dev-2020.14 -js_branch=share_class_enum
+  
+  Use this  cyberark url to login, if you couldn't, check with HelpDesk to have your profile enabled (which is what I did):
+https://ch1vs-cyber01.lazard.com/PasswordVault/v10/logon/radius
+...once you are in click on nj1ux-rhdev16 to launch the RDP for jumphost (edited) 

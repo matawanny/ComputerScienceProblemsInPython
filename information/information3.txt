@@ -1,0 +1,109 @@
+s3://lazard-test-client-master/ETL/data/salesvision/TEST_salesvision_firm_PROD_profile_09_30_2019.gz
+s3://lazard-test-client-master/ETL/data/salesvision/TEST_salesvision_office_PROD_profile_09_30_2019.gz
+s3://lazard-test-client-master/ETL/data/salesvision/TEST_salesvision_person_PROD_profile_09_30_2019.gz
+
+
+TEST_salesvision_firm_PROD_profile_09_30_2019.gz_1571063968662
+TEST_salesvision_office_PROD_profile_09_30_2019.gz_1571063973192
+TEST_salesvision_person_PROD_profile_09_30_2019.gz_1571063979621
+
+/usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/etl_driver.py -c s3://lazard-emr-test-data/MDM/1118_sfsvsf_test/30/TEST_salesvision_firm_PROD_profile_09_30_2019.gz_1571063968662 -e
+
+/usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/etl_driver.py -c s3://lazard-emr-test-data/MDM/1118_sfsvsf_test/30/TEST_salesvision_office_PROD_profile_09_30_2019.gz_1571063973192 -e
+
+
+/usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --driver-memory 20g --executor-memory 20g --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/etl_driver.py -c s3://lazard-emr-test-data/MDM/1118_sfsvsf_test/30/TEST_salesvision_person_PROD_profile_09_30_2019.gz_1571063979621 -e
+
+
+
+
+
+/usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6  --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/etl_driver.py -c  s3://lazard-test-client-master/MDM/1118_sfsvsf_test/31/TEST_salesvision_person_profile_11_18_2019.gz_1588086498941 -e
+
+
+
+
+
+
+
+
+
+
+
+
+nohup /usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/mdm_driver.py -s s3://lazard-emr-test-data/MDM/1118_sfsvsf_test/31/  -m false -p stg_ -e -x SV &
+
+
+
+
+nohup /usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/mdm_driver.py -s s3://lazard-emr-test-data/MDM/1118_sfsvsf_test/30/  -m false -p stg_ -e -x SV &
+
+nohup /usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/mdm_driver.py -s
+s3://lazard-emr-test-data/MDM/conf/SV/1118 -m false -p stg_ -e -x SV &
+
+
+
+nohup /usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --driver-memory 20g  --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/development/edm-dpl.zip s3://lazard-test-client-master/code/dpl/development/mdm_driver.py -s s3://lazard-emr-test-data/MDM/1118_sfsvsf_test/30/  -m false -p stg_ -e -x SV &
+
+
+/usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/runResolveTest.py  
+
+/usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/runResolveIngestedAtTest.py
+
+
+
+update the SV FOP export job to pull from stg_XXXX_entity to capture FOP records that have been ingested via ingested_at from the last ack file that ONLY have a sv_sf_dbsync
+
+currently we got SV to CM and we do not have SF to CM,
+
+So we need to add SF -> CM -> SV. i need to do CM->SV
+
+query table every day to detect any change since the last query date.
+
+There is another jira to implement  SF -> CM
+
+in sf_entity_api_export_v.py in data pipeline, we've added some logic to create a "max updated at"; which gets all updated ats for some different models, and picks the biggest one. I think you'll need to do something similar using ingested_at in sv_fop_export_v.py (that is, get any records that have an event code of I, and always grab the max/latest)
+
+
+
+nohup /usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/development/edm-dpl.zip s3://lazard-test-client-master/code/dpl/development/mdm_driver.py -s s3://lazard-emr-test-data/MDM/1118_sfsvsf_test/31/  -m false -p stg_ -e -x SV &
+
+
+entity_id	entity_type_id	ingested_at		etl_source	updated_at
+000c502de431965cdb976f04c6795095	101	2019-09-30 00:00:00	sv_person	2019-04-19 02:55:38
+00232c62053092baf31250fab0a2b016	201	2019-09-30 00:00:00	sv_office	2017-03-13 07:44:24
+0026c316c26ecc6c900a53d2e0cb8881	201	2019-09-30 00:00:00	sv_office	2019-04-10 04:58:15
+002bc437790c49f0cd46ca0a267c7c30	101	2019-09-30 00:00:00	sv_person	2017-12-08 03:17:44
+002d1d8ac80fe927d23221b3d58317fc	101	2019-09-30 00:00:00	sv_person	2019-06-07 02:44:16
+004a36c13c5f5f4db46a86bbcc935ac6	201	2019-09-30 00:00:00	sv_office	2015-08-04 07:32:38
+005cf2a466d723b75273639112509066	101	2019-09-30 00:00:00	sv_person	2015-05-08 03:30:42
+00664533614e91f94ab82f78aa5bfc79	201	2019-09-30 00:00:00	sv_office	2019-04-10 04:58:15
+00176080467d407f96c266998bc34903	101	2019-09-30 00:00:00	sv_person	2017-02-02 02:37:37
+00665c09a7c5a56bdaa36565e3cd33a1	101	2019-09-30 00:00:00	sv_person	2017-03-10 02:55:26
+
+
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/last_ack_date/edm-commons.zip,s3://lazard-test-client-master/code/dpl/last_ack_date/edm-dpl.zip s3://lazard-test-client-master/code/dpl/last_ack_date/dbsync_driver.py -p stg_nav_edm2681_sf_upd_del -s sv_fop_export_new &
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/last_ack_date/edm-commons.zip,s3://lazard-test-client-master/code/dpl/last_ack_date/edm-dpl.zip s3://lazard-test-client-master/code/dpl/last_ack_date/dbsync_driver.py -p stg_nav_edm2681_mini_reg -s sv_fop_export_new &
+
+
+
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/last_ack_date/edm-commons.zip,s3://lazard-test-client-master/code/dpl/last_ack_date/edm-dpl.zip s3://lazard-test-client-master/code/dpl/last_ack_date/dbsync_driver.py -p stg_jjtest -s sv_fop_export &
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/last_ack_date/edm-commons.zip,s3://lazard-test-client-master/code/dpl/last_ack_date/edm-dpl.zip s3://lazard-test-client-master/code/dpl/last_ack_date/dbsync_driver.py -p stg_nav_edm2681_sf_upd_del -s sv_fop_export_print &
+
+
+/usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/sf_ack_fix/edm-dpl.zip s3://lazard-test-client-master/code/dpl/sf_ack_fix/dbsync_driver.py -s sf_fop_export_print
+
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/last_ack_date/edm-commons.zip,s3://lazard-test-client-master/code/dpl/last_ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/last_ingested_at/dbsync_driver.py -p stg_jjtest8 -s sv_fop_export &
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/rep_code/edm-commons.zip,s3://lazard-test-client-master/code/dpl/last_ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/last_ingested_at/dbsync_driver.py -p stg_phillip_full_reg -s sv_fop_export_print &
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/rep_code/edm-commons.zip,s3://lazard-test-client-master/code/dpl/last_ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/last_ingested_at/dbsync_driver.py -p stg_sv_init_29 -s sv_fop_export_print &
+
+
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/development/edm-dpl.zip s3://lazard-test-client-master/code/dpl/development/dbsync_driver.py -p stg_phillip_full_reg -s sv_fop_export &

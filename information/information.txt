@@ -1,0 +1,204 @@
+ssh xiaop@nj1ux-edmdevfm1
+ssh xiao@nj1ux-edmpfm 
+
+ssh xiaop@xiaop_aws@nj1ux-rhdev16@ch1ux-cyber02
+
+
+/opt/CARKaim/bin/pimsu -u edmfilemgr
+
+====
+git clone https://bitbucket.aws.lazard.com/projects/EDM/repos/edm-fm/browse?at=refs%2Fheads%2Ffeature%2Fxiaop-fm-refactor
+
+
+/opt/CARKaim/bin/pimsu -u edmfilemgr
+
+
+filemanager code installation on the filemanager machine: /home/edmfilemgr/edm-fm
+
+jobsystem code installation on the filemanager machine: /home/edmfilemgr/jobsystem
+
+python -m unittest discover -v
+python -m unittest discover -v -p '*one.py'
+python -m unittest discover -v -s suite/
+python -m unittest discover -v -s suite/ -t
+
+
+#unittest package
+self.assertEqual(5,5)
+self.assertNotEqual(5,7)
+
+self.assertGreaterEqual(5,5)
+self.assertGreater(5,3)
+self.assertLess(3,5)
+self.assertLessEqual(5,5)
+
+self.assertTrue(True)
+self.assertFlase(False)
+
+self.assertIs(None, None)
+self.assertIsNot(5,None)
+self.assertIsNone(None)
+self.assertIsNotNone(5)
+
+self.assertIsInstance(5, int)
+self.assertIsNotInstance(5, str)
+
+self.assertIn(5, (3,5,7))
+self.assertNotIn(5, (2,4,6))
+self.assertCountEqual((1,2,3,3),(3,2,3,1))
+
+with self.assertRaises(ValueError):
+	rase ValueError
+	
+	
+        sec_key = base64.b64encode(os.urandom(16))
+        real_headers[hdrs.SEC_WEBSOCKET_KEY] = sec_key.decode()
+		
+	
+#install Virtual enviroment
+/opt/CARKaim/bin/pimsu -u edmfilemgr
+cd 
+python3 -m venv pytest_3_venv
+source ./pytest_3_venv/bin/activate
+# install package
+pip install --upgrade pip --trusted-host pypi.org --trusted-host files.pythonhosted.org
+pip install pytest  --trusted-host pypi.org --trusted-host files.pythonhosted.org
+pip install wheel  --trusted-host pypi.org --trusted-host files.pythonhosted.org
+pip install pyspark  --trusted-host pypi.org --trusted-host files.pythonhosted.org	
+pip install boto3 --trusted-host pypi.org --trusted-host files.pythonhosted.org	
+pip install config  --trusted-host pypi.org --trusted-host files.pythonhosted.org
+pip install pysftp  --trusted-host pypi.org --trusted-host files.pythonhosted.org
+pip install sqlanydb  --trusted-host pypi.org --trusted-host files.pythonhosted.org
+
+pip install --upgrade numpy --trusted-host pypi.org --trusted-host files.pythonhosted.org
+
+pip install --upgrade pip --trusted-host pypi.org --trusted-host files.pythonhosted.org
+
+sudo pip-3.6 install --upgrade numpy --trusted-host pypi.org --trusted-host files.pythonhosted.org
+ sudo rm -rf /usr/local/lib64/python3.6/site-packages/numpy*
+sudo pip-3.6 install numpy==1.15.4 Collecting numpy==1.15.4
+
+access aws cli
+
+/usr/local/bin/aws-4308-role-LazardFileManagerRole.py
+aws 
+
+aws s3 ls lazard-test-client-master/ETL/data/amg/
+
+aws s3 ls lazard-test-client-master/ETL/ReferenceData
+
+aws s3 rm s3://lazard-test-client-master/ETL/data/ReferenceData/FXRates --recursive
+
+
+
+select SHARE_CLASS_ID, VEHICLE_TYPE_ID, PRODUCT_ID, VEHICLE_TYPE_DESC, PRODUCT_NAME, SHARE_CLASS_NAME, STATUS, CURRENCY_ID, ISIN, CUSIP, TICKER, APIR_CODE, SSALUR, PMF_ID, SUB_STRATEGY_ID, category_id, category_desc 
+
+from amv_mktg_share_class_detailed
+
+
+
+
+/usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/xiaop_refactor/edm-commons.zip,s3://lazard-test-client-master/code/dpl/development/edm-dpl.zip s3://lazard-test-client-master/code/dpl/development/etl_driver.py -f "{\"etl_name\": \"Share Class Enum ETL\", \"packages\": null, \"prefix\": \"\", \"file_extension\": \"csv\", \"source_type\": \"csv\", \"source_name\": \"share_class_enum\", \"schema_name\": \"share_class_enum\", \"destinations\": [\"postgres\", \"parquet\"], \"source_schema_name\": \"SHARE_CLASS_ENUM\", \"target_schema_name\": \"share_class_enum_schema\", \"transformer\": \"ShareClassEnumTransformer\", \"output_location\": {\"emr\": \"s3://lazard-test-client-master/etl-output/share_class_enum/\"}, \"input_location\": {\"emr\": \"s3://lazard-test-client-master/ETL/data/ReferenceData/share_class_enum_data_04-0682020.csv.gz\", \"source\": \"enum\"}, \"file_date\": \"04-08-2020\", \"job-id\": \"1583528420473\"}" "-m False"
+
+
+
+
+/usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/share_class_enum/edm-commons.zip,s3://lazard-test-client-master/code/dpl/feature/share_class_enum/edm-dpl.zip s3://lazard-test-client-master/code/dpl/feature/share_class_enum/etl_driver.py -f "{\"etl_name\": \"Share Class Enum ETL\", \"packages\": null, \"prefix\": \"\", \"file_extension\": \"csv\", \"source_type\": \"csv\", \"source_name\": \"share_class_enum\", \"schema_name\": \"share_class_enum\", \"destinations\": [\"postgres\", \"parquet\"], \"source_schema_name\": \"SHARE_CLASS_ENUM\", \"target_schema_name\": \"share_class_enum_schema\", \"transformer\": \"ShareClassEnumTransformer\", \"output_location\": {\"emr\": \"s3://lazard-test-client-master/etl-output/share_class_enum/\"}, \"input_location\": {\"emr\": \"s3://lazard-test-client-master/ETL/data/ReferenceData/share_class_enum_data_04-09-2020.csv.gz\", \"source\": \"enum\"}, \"file_date\": \"04-09-2020\", \"job-id\": \"55f430fa7a8d11eab818005056ad1a51\"}" "-m False"
+
+
+
+
+
+
+
+
+ /usr/bin/spark-submit --num-executors 2 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/development/edm-dpl.zip s3://lazard-test-client-master/code/dpl/development/etl_driver.py -c s3://lazard-test-client-master/ETL/conf/incoming/share_class_enum_data_03-06-2020.csv_cp -m false -e
+
+select * from edm_params 163  
+/usr/local/bin/aws-6172-role-LazardFileManagerRole.py
+
+ETL incoming folder: s3://lazard-prod-client-master/ETL/conf/SV/incoming/
+CIRCE incoming folder:  aws s3 ls  s3://lazard-prod-client-master/CIRCE/conf/SV/incoming/
+EMD incoming folder: 
+
+Spark job: 
+ETL: start once for all the files.  
+CIRCE: start for each conf  sp_
+MDM: start once
+the other one is MDM
+
+
+DB|sf_entity_api will trigger the DBSync job for Entity Exports to SF
+DB|sf_agreement_api will trigger the DBSync job for agreement exports to SF.
+
+
+jobsystem/function.py
+
+
+git branch -d branch_name
+git branch -D branch_name
+git push <remote_name> --delete <branch_name>
+
+git checkout -b [name_of_your_new_branch]
+git push origin [name_of_your_new_branch]
+git branch -a 
+
+
+
+ ssh -i /export/home/xiaop_aws/.ssh/id_rsa_emr
+
+ cd workspace/
+ git clone https://bitbucket.aws.lazard.com/scm/edm/cm-deploy.git
+  
+ cd cm-deploy/
+ ./make_edm.sh -gu=xiaop
+ vim build_edm.sh
+    ./build_edm.sh dpl commons
+    /usr/local/bin/show_aws_role_menu.ksh
+	
+	 ./launch_emr.sh -u=etl
+ 
+ aws s3 ls s3://lazard-prod-client-master/MDM/conf/SV/incoming/
+AMG, FiSHTANK, SF
+
+________________________
+sftp -P 10022 svlazard@clientxfer.adp-ics.com
+
+password: zard10l$
+cd /svlazard
+
+bash-4.2$ python /home/edmfilemgr/jobsystem/override_cob_dao.py -env test -feed_name ShareClass_ETL -override_cob_date 12-02-2020 -time_to_live 0
+new command
+ python /home/edmfilemgr/jobsystem/override_cob.py -env test -data_sources Reference_Data_Import -override_cob  2020-12-02 -duration 0
+
+/usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/sf_dbsync/edm-commons.zip,s3://lazard-test-client-master/code/dpl/sf_dbsync/edm-dpl.zip s3://lazard-test-client-master/code/dpl/sf_dbsync/dbsync_driver.py -s sv_fop_export
+
+
+
+/usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/sv_valid_fix/edm-dpl.zip s3://lazard-test-client-master/code/dpl/sv_valid_fix/dbsync_driver.py -s sv_fop_export_print
+
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/fx_rate_etl/edm-commons.zip,s3://lazard-test-client-master/code/dpl/fx_rate_etl/edm-dpl.zip s3://lazard-test-client-master/code/dpl/fx_rate_etl/etl_driver.py -f "{\"etl_name\": \"FX Rate Conversion ETL\", \"packages\": null, \"prefix\": \"\", \"file_extension\": \"csv\", \"source_type\": \"csv\", \"source_name\": \"fx_rate_conversion\", \"schema_name\": \"fx_rate_conversion\", \"destinations\": [\"postgres\", \"parquet\"], \"source_schema_name\": \"FX_RATE_CONVERSION\", \"target_schema_name\": \"fx_rate_conversion_schema\", \"transformer\": \"FXRateConversionTransformer\", \"output_location\": {\"emr\": \"s3://lazard-test-client-master/etl-output/fx_rate_conversion/\"}, \"input_location\": {\"emr\": \"s3://lazard-test-client-master/ETL/data/ReferenceData/FXRate/fx_rate_conversion_2020-10-15.csv.gz\", \"source\": \"conversion\"}, \"file_date\": \"10-15-2020\", \"job-id\": \"1583528420473\"}" "-m False" &
+
+
+
+Cesar Hurtado  3:20 PM
+hi @Greg Pelts.  @navin.ramachandran, @Adam Perez, and i just chatted about the design of deletes and merges.
+Deletes from SF into CM: (1) SF will send an end-date field in the entity dump, and ETL will consume and provide this field in the post-ETL table. (2) MDM will update the relevant record with the new end-date value and write a record in the audit log.
+Merges from SF into CM: (1) This will be a file drop from SF, using similar fields as what SV sends to CM (how exactly? where is the file dropped? will the new file manager pick it up?).  After the file is consumed, MDM will add a new M record to the audit log table. We'll use the audit log table for merges so that there is only one point of contact between acknowledgements and mdm.
+New jira required: Ingested at needs to use a timestamp in addition to the date stamp. This field is created by File Manager and stored in the Conf file.
+Source field: Navin added a new source field to the audit log table.
+Deletes from CM into SF: New issue raised by Adam. The API needs a clear way to detect entity Deletes. The suggestion is to use the audit log table where the source is SV.
+Follow ups:  (1) On tuesday by noon, James and Adam should have already a good sense on how and when the SF->CM delete solution will work.  (2) on Monday EOD Navin should have a good sense on whether the new Merge record can be inserted into the audit log table.
+(edited)
+
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/fx_conversions/edm-commons.zip,s3://lazard-test-client-master/code/dpl/fx_rate_etl/edm-dpl.zip s3://lazard-test-client-master/code/dpl/fx_rate_etl/etl_driver.py -f "{\"etl_name\": \"FX Rate Conversion ETL\", \"packages\": null, \"prefix\": \"\", \"file_extension\": \"csv\", \"source_type\": \"csv\", \"source_name\": \"fx_rate_conversion\", \"schema_name\": \"fx_rate_conversion\", \"destinations\": [\"postgres\", \"parquet\"], \"source_schema_name\": \"FX_RATE_CONVERSION\", \"target_schema_name\": \"fx_rate_conversion_schema\", \"transformer\": \"FXRateConversionTransformer\", \"output_location\": {\"emr\": \"s3://lazard-test-client-master/etl-output/fx_rate_conversion/\"}, \"input_location\": {\"emr\": \"s3://lazard-test-client-master/ETL/data/ReferenceData/FXRate/fx_rate_conversion_2020-10-19.csv.gz\", \"source\": \"conversion\"}, \"file_date\": \"10-15-2020\", \"job-id\": \"cc\"}" "-m False" &
+
+
+
+
+/usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/development/etl_driver.py -c  -e
+
+
+nohup /usr/bin/spark-submit --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/rep_code/edm-commons.zip,s3://lazard-test-client-master/code/dpl/share_class/edm-dpl.zip s3://lazard-test-client-master/code/dpl/share_class/etl_driver.py -f "{\"etl_name\": \"Share Class Enum ETL\", \"packages\": null, \"prefix\": \"\", \"file_extension\": \"csv\", \"source_type\": \"csv\", \"source_name\": \"share_class_enum\", \"schema_name\": \"share_class_enum\", \"destinations\": [\"postgres\", \"parquet\"], \"source_schema_name\": \"SHARE_CLASS_ENUM\", \"target_schema_name\": \"share_class_enum_schema\", \"transformer\": \"ShareClassEnumTransformer\", \"output_location\": {\"emr\": \"s3://lazard-test-client-master/etl-output/share_class_enum/\"}, \"input_location\": {\"emr\": \"s3://lazard-test-client-master/ETL/data/ReferenceData/ShareClassEnum/share_class_enum_data_12-04-2020.csv.gz\", \"source\": \"enum\"}, \"file_date\": \"12-04-2020\", \"job-id\": \"1583528420473\"}" "-m False" &

@@ -1,0 +1,18 @@
+/usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/etl_driver.py -c s3://lazard-emr-test-data/MDM/1118_sfsvsf_test/31/TEST_salesvision_person_profile_11_18_2019.gz_1588086498941 -e
+
+
+
+/usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/etl_driver.py -c s3://lazard-emr-test-data/MDM/1118_sfsvsf_test/31/TEST_salesvision_person_profile_11_18_2019.gz_1588086498941 -e
+
+
+nohup /usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/ingested_at/edm-commons.zip,s3://lazard-test-client-master/code/dpl/ingested_at/edm-dpl.zip s3://lazard-test-client-master/code/dpl/ingested_at/mdm_driver.py -s s3://lazard-emr-test-data/MDM/1118_sfsvsf_test/31/  -m false -p stg_ -e -x SV &
+
+
+
+/usr/bin/spark-submit --num-executors 2 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/sv_valid_fix/edm-dpl.zip s3://lazard-test-client-master/code/dpl/sv_valid_fix/etl_driver.py -c s3://lazard-test-client-master/ETL/conf/incoming/TEST_salesvision_firm_chtest1_07_01_2020.gz_1596848398899 -m false -e
+
+nohup /usr/bin/spark-submit --num-executors 12 --jars s3://lazard-test-client-master/code/jars/postgresql-42.2.5.jar --master yarn --conf spark.pyspark.python=/usr/bin/python3.6 --py-files s3://lazard-test-client-master/code/commons/development/edm-commons.zip,s3://lazard-test-client-master/code/dpl/sv_valid_fix/edm-dpl.zip s3://lazard-test-client-master/code/dpl/sv_valid_fix/mdm_driver.py -s s3://lazard-test-client-master/MDM/conf/SV/incoming/  -m false -p stg_ -e -x SV &
+
+
+
+
